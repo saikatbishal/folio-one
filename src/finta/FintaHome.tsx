@@ -59,8 +59,13 @@ const FintaHome = () => {
     },
   };
 
-  // --- End Animation Variants ---
-
+  const [isMobile, setIsMobile] = useState<boolean>(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
   return (
     <div>
       {/* Navbar Section */}
@@ -74,13 +79,15 @@ const FintaHome = () => {
       >
         <div className="fixed flex gap-10 right-20">
           <Navbar />
-          <FintaButton
-            text="Get Started"
-            href="/login"
-            variant="primary"
-            rounded="md"
-            size="md"
-          />
+          {!isMobile && (
+            <FintaButton
+              text="Get Started"
+              href="/login"
+              variant="primary"
+              rounded="md"
+              size="md"
+            />
+          )}
           {/* <Toggle
             pressed={isDarkMode}
             onPressedChange={() => {
@@ -193,39 +200,38 @@ const FintaHome = () => {
         >
           For US-based C-Corps, LLCs, and PBCs.
         </motion.p>
-<div className="relative rounded-xl overflow-hidden justify-center items-center self-center flex">
-            <motion.img
-          style={{
-            translateZ: 100,
-            
-          }}
-          initial={{
-            opacity: 0.8,
-            y: 40,
-            rotateY: 20,
-            rotateX: 40
-          }}
-          animate={{
-            rotateY: 0,
-            rotateX:0,
-            opacity: 1,
-            y: 0,
-          }}
-          transition={{
-            duration: 1.3,
-          }}
-          src={uiheroimage}
-          alt="ui-hero-image"
-          className="object-cover"
-          height="80%"
-          width="80%"
-        />
-  <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
-
+        <div className="relative rounded-xl overflow-hidden justify-center items-center self-center flex">
+          <motion.img
+            style={{
+              translateZ: 100,
+            }}
+            initial={{
+              opacity: 0.8,
+              y: 40,
+              rotateY: 20,
+              rotateX: 40,
+            }}
+            animate={{
+              rotateY: 0,
+              rotateX: 0,
+              opacity: 1,
+              y: 0,
+            }}
+            transition={{
+              duration: 1.3,
+            }}
+            src={uiheroimage}
+            alt="ui-hero-image"
+            className="object-cover"
+            height="80%"
+            width="80%"
+          />
+          <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
         </div>
-<p className="flex justify-center items-center -mt-10 mb-20  ">Trusted by fast-growing startups</p>
+        <p className="flex justify-center items-center -mt-10 mb-20  ">
+          Trusted by fast-growing startups
+        </p>
       </motion.div>
-
     </div>
   );
 };

@@ -17,108 +17,6 @@ import {
 import { useState } from "react";
 import FintaButton from "./FintaButton";
 
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       viewBox="0 0 24 24"
-//       width="48"
-//       height="48"
-//       fill="none"
-//       stroke="#222"
-//       strokeWidth="2.2"
-//       strokeLinecap="round"
-//       strokeLinejoin="round"
-//       style={{ transform: "scale(0.6)" }}
-//     >
-//       <path d="M15 4h3a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-3" />
-//       <path d="M10 8l4 4-4 4" />
-//       <path d="M4 12h10" />
-//     </svg>
-//   );
-// };
-// const PasswordIcon = () => {
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       stroke="currentColor"
-//       stroke-width="2"
-//       stroke-linecap="round"
-//       stroke-linejoin="round"
-//       className="icon icon-tabler icons-tabler-outline icon-tabler-lock"
-//       style={{ transform: "scale(1.6)" }}
-//     >
-//       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-//       <path d="M5 13a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v6a2 2 0 0 1 -2 2h-10a2 2 0 0 1 -2 -2v-6z" />
-//       <path d="M11 16a1 1 0 1 0 2 0a1 1 0 0 0 -2 0" />
-//       <path d="M8 11v-4a4 4 0 1 1 8 0v4" />
-//     </svg>
-//   );
-// };
-// const EmailIcon = () => {
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="currentColor"
-//       className="icon icon-tabler icons-tabler-filled icon-tabler-mail"
-//       style={{ transform: "scale(1.6)" }}
-//     >
-//       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-//       <path d="M22 7.535v9.465a3 3 0 0 1 -2.824 2.995l-.176 .005h-14a3 3 0 0 1 -2.995 -2.824l-.005 -.176v-9.465l9.445 6.297l.116 .066a1 1 0 0 0 .878 0l.116 -.066l9.445 -6.297z" />
-//       <path d="M19 4c1.08 0 2.027 .57 2.555 1.427l-9.555 6.37l-9.555 -6.37a2.999 2.999 0 0 1 2.354 -1.42l.201 -.007h14z" />
-//     </svg>
-//   );
-// };
-// const VisibilityOffIcon = () => {
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       stroke="currentColor"
-//       stroke-width="2"
-//       stroke-linecap="round"
-//       stroke-linejoin="round"
-//       className="icon icon-tabler icons-tabler-outline icon-tabler-eye-off"
-//       style={{ transform: "scale(1.6)" }}
-//     >
-//       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-//       <path d="M10.585 10.587a2 2 0 0 0 2.829 2.828" />
-//       <path d="M16.681 16.673a8.717 8.717 0 0 1 -4.681 1.327c-3.6 0 -6.6 -2 -9 -6c1.272 -2.12 2.712 -3.678 4.32 -4.674m2.86 -1.146a9.055 9.055 0 0 1 1.82 -.18c3.6 0 6.6 2 9 6c-.666 1.11 -1.379 2.067 -2.138 2.87" />
-//       <path d="M3 3l18 18" />
-//     </svg>
-//   );
-// };
-// const VisibilityOnIcon = () => {
-//   return (
-//     <svg
-//       xmlns="http://www.w3.org/2000/svg"
-//       width="24"
-//       height="24"
-//       viewBox="0 0 24 24"
-//       fill="none"
-//       stroke="currentColor"
-//       stroke-width="2"
-//       stroke-linecap="round"
-//       stroke-linejoin="round"
-//       className="icon icon-tabler icons-tabler-outline icon-tabler-eye"
-//       style={{ transform: "scale(1.6)" }}
-//     >
-//       <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-//       <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
-//       <path d="M21 12c-2.4 4 -5.4 6 -9 6c-3.6 0 -6.6 -2 -9 -6c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6" />
-//     </svg>
-//   );
-// };
-
 const Login = () => {
   const [visibility, setVisibility] = useState(false);
   const icons = [
@@ -156,7 +54,7 @@ const Login = () => {
           // initial={{ opacity: 0, y: -20, scale:0.1}}
           // animate={{ opacity: 1, y: 0, scale:1}}
           // transition={{ duration: 0.5 }}
-          className="card items-center flex flex-col w-full h-[430px] bg-gradient-to-b from-[var(--input-bg)] via-[var(--card)] to-[var(--card)] rounded-4xl p-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+          className="card items-center flex flex-col w-full h-[430px] bg-gradient-to-b from-[var(--input-bg)] to-[var(--card)] rounded-4xl p-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
         >
           <div className=" mt-4 p-1 rounded-3xl shadow-md bg-linear-to-b from-white via-white to-[#97e5ff2e] max-w-max">
             <LoginIcon />

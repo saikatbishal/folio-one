@@ -169,6 +169,7 @@ const Founders = () => {
       <div className="relative">
         {showBio && (
           <FintaModal
+          padding=""
             setIsOpen={setShowBio}
             data={
               <motion.div className="grid grid-cols-2">
@@ -199,7 +200,7 @@ const Founders = () => {
                     alt={foundersData[active].name}
                     className="h-full w-full rounded-l-2xl object-cover object-center"
                     whileHover={{
-                      scale: 1.1,
+                      scale: 1,
                     }}
                   />
                 </motion.div>
