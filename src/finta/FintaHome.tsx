@@ -1,15 +1,16 @@
 import FintaButton from "./FintaButton";
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import uiheroimage from "../../public/herouiv5.png";
+import { useNavigate } from "react-router-dom";
+import uiheroimage from "../../public/herouiv1.png";
 // import { Toggle } from "../components/ui/toggle";
 // import { DarkModeIcon, LightModeIcon } from "../../public/Icons";
 import { motion } from "framer-motion";
 // import { useTheme } from "../context/ThemeContext";
-const FintaHome = () => {
-  const [scrolled, setScrolled] = useState(false);
-  // const { isDarkMode, toggleTheme } = useTheme();
 
+const FintaHome = () => {
+  const navigate = useNavigate();
+  const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 0);
@@ -163,11 +164,12 @@ const FintaHome = () => {
           <br />
           Set up in 10 mins. Back to building by 11:31pm.
         </motion.p>
-
         <motion.div className="flex gap-2" variants={heroItemVariants}>
           <FintaButton
             text="Get Started"
-            href="/login"
+            onClick={() => {
+              navigate("/login");
+            }}
             variant="primary"
             rounded="md"
             size="lg"
@@ -189,6 +191,9 @@ const FintaHome = () => {
               </div>
             }
             variant={"transparent"}
+            onClick={() => {
+              navigate("/pricing");
+            }}
             rounded="md"
             size="lg"
           />
@@ -198,7 +203,7 @@ const FintaHome = () => {
           className="text-xs text-muted-foreground tracking-tight -mt-2"
           variants={heroItemVariants}
         >
-          For US-based C-Corps, LLCs, and PBCs.
+          For India-based C-Corps, LLCs, and PBCs.
         </motion.p>
         <div className="relative rounded-xl overflow-hidden justify-center items-center self-center flex">
           <motion.img

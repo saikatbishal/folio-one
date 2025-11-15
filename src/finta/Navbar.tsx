@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import FintaButton from "./FintaButton";
 import FintaModal from "./FintaModal";
 import { motion } from "motion/react";
-
+import { useAuth } from "../hooks/useAuth";
+import {users} from '../../public/db/users.json'
 const Navbar = ({ className }: { className?: string }) => {
   const [isMobile, setIsMobile] = useState<boolean>(false);
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { isAuthenticated, user, logout } = useAuth();
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768);
@@ -16,7 +18,7 @@ const Navbar = ({ className }: { className?: string }) => {
   }, []);
 
   const links = (
-    <div className="flex flex-col items-center gap-4 p-6">
+    <div className="flex flex-col items-center gap-4 p-8">
       <Link
         to="/founders"
         className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
@@ -38,22 +40,28 @@ const Navbar = ({ className }: { className?: string }) => {
       >
         Pricing
       </Link>
-      <a
-        href="/login"
-        target="_blank"
-        rel="noreferrer"
-        className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
-        onClick={() => setIsOpen(false)}
-      >
-        Log In
-      </a>
-      <FintaButton
-        text="Get Started"
-        href="/login"
-        variant="primary"
-        rounded="md"
-        size="md"
-      />
+      {isAuthenticated ? (
+        <button
+          onClick={() => {
+            logout();
+            setIsOpen(false);
+            window.location.href = "/";
+          }}
+          className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
+        >
+          Log Out ({user?.username})
+        </button>
+      ) : (
+        <a
+          href="/login"
+          target="_blank"
+          rel="noreferrer"
+          className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
+          onClick={() => setIsOpen(false)}
+        >
+          Log In
+        </a>
+      )}
     </div>
   );
 
@@ -79,15 +87,41 @@ const Navbar = ({ className }: { className?: string }) => {
           >
             Pricing
           </Link>
-          <li>
-            <a
-              href="/login"
-              target="_blank"
-              rel="noreferrer"
+          {isAuthenticated && (
+            <Link
+              to="/userprofile"
               className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-sm"
             >
-              Log In
-            </a>
+             
+              <img src={ users.find((u) => u.username === user?.username)?.image} style={{
+                borderRadius: "50%",
+                height:"24px",
+                width: "24px",
+                objectFit: "cover"
+              }}/>
+            </Link>
+          )}
+          <li>
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  logout();
+                  window.location.href = "/";
+                }}
+                className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-sm"
+              >
+                Log Out
+              </button>
+            ) : (
+              <a
+                href="/login"
+                target="_blank"
+                rel="noreferrer"
+                className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-sm"
+              >
+                Log In
+              </a>
+            )}
           </li>
         </ul>
       ) : (
@@ -114,8 +148,8 @@ const Navbar = ({ className }: { className?: string }) => {
 
       {isMobile && isOpen ? (
         <motion.div
-          initial={{ opacity: 0, scale: 0.8, y: -40}}
-          animate={{ opacity: 1, scale: 1, y: 0}}
+          initial={{ opacity: 0, scale: 0.8, y: -40 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.8, y: -40 }}
           className="absolute top-0 left-0 w-full h-full bg-white z-999"
         >

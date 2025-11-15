@@ -1,9 +1,11 @@
 import FintaButton from "./FintaButton";
 import Navbar from "./Navbar";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/button";
 import { ButtonGroup } from "../components/ui/button-group";
 import { useState } from "react";
 import { motion, type Variants } from "motion/react";
+import { useAuth } from "../hooks/useAuth";
 // import Content from "../Content";
 
 interface PlanCardProps {
@@ -85,7 +87,10 @@ const PlanCard: React.FC<PlanCardProps> = ({
   highlighted = false,
   index,
 }) => {
+    const { isAuthenticated } = useAuth();
+  
   const [imageOpacity, setImageOpacity] = useState(0);
+const navigate = useNavigate();
 
   return (
     <motion.div
@@ -154,13 +159,28 @@ const PlanCard: React.FC<PlanCardProps> = ({
         <div
           onMouseEnter={() => setImageOpacity(0.4)}
           onMouseLeave={() => setImageOpacity(0.2)}
-          onMouseDown={() => setImageOpacity(0.5)}
+          onMouseDown={() => {setImageOpacity(0.5)
+            if(isAuthenticated)
+              navigate('/checkout')
+            else
+              navigate('/login')
+            console.log(isAuthenticated)
+          }}
           onMouseUp={() => setImageOpacity(0.4)}
           className="w-full"
         >
           <FintaButton
             variant={highlighted ? "primary" : "muted"}
             text={buttonLabel}
+            onClick={()=>{
+              if(isAuthenticated)
+              navigate('/checkout')
+            else
+              navigate('/login')
+
+                        console.log(isAuthenticated)
+
+            }}
             size="lg"
             className="w-full"
           />
@@ -176,7 +196,6 @@ const Pricing = () => {
   const handlePlanTermChange = (isMonthly: boolean) => {
     setMonthlyPayment(isMonthly);
   };
-
   const plans = [
     {
       id: 1,

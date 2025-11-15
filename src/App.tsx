@@ -1,5 +1,8 @@
 import { Route, Routes } from "react-router-dom";
+import { useAuth } from "./hooks/useAuth";
+import UserProfile from "./finta/UserProfile.tsx";
 import "./App.css";
+import {users} from '../public/db/users.json'
 import FintaHome from "./finta/FintaHome.tsx";
 import Founders from "./finta/Founders.tsx";
 import Guide from "./finta/Guide.tsx";
@@ -8,8 +11,14 @@ import Login from "./finta/Login.tsx";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { FintaLogo } from "../public/Icons.tsx";
+import ComingSoon from "./finta/ComingSoon.tsx";
 function App() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuth();
+  // PrivateRoute component
+  const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
+    return isAuthenticated ? <>{children}</> : <Login />;
+  };
   return (
     <motion.div
       initial={{
@@ -27,10 +36,25 @@ function App() {
       </div>
       <Routes>
         <Route path="/" element={<FintaHome />} />
+        <Route path="*" element={<ComingSoon />} />
         <Route path="/founders" element={<Founders />} />
         <Route path="/guide" element={<Guide />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/userprofile"
+          element={
+            <PrivateRoute>
+              <UserProfile
+                id={user?.id ?? 0}
+                name={user?.username}
+                username={user?.username}
+                email={user?.email}
+                image={users.find((u) => u.username === user?.username)?.image}
+              />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </motion.div>
   );
