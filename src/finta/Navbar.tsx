@@ -52,15 +52,15 @@ const Navbar = ({ className }: { className?: string }) => {
           Log Out ({user?.username})
         </button>
       ) : (
-        <a
-          href="/login"
+        <Link
+          to="/login"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
           onClick={() => setIsOpen(false)}
         >
           Log In
-        </a>
+        </Link>
       )}
     </div>
   );
