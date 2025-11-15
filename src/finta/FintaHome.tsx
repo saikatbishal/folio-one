@@ -234,7 +234,7 @@ const FintaHome = () => {
           <div className="absolute inset-0 bg-linear-to-t from-white via-transparent to-transparent"></div>
         </div>
         <p className="flex justify-center items-center -mt-10 mb-20  ">
-          Trusted by fast-growing startups
+          Trusted by fast-growing startups. Made with Love by Saikat Bishal
         </p>
       </motion.div>
     </div>
