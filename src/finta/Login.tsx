@@ -29,13 +29,13 @@ const Login = () => {
   const [visibility, setVisibility] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-const location = useLocation();
-const navigate = useNavigate()
-  
-  console.log(location.pathname);  // e.g., "/users/123"
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  console.log(location.pathname); // e.g., "/users/123"
   // console.log(location.search);    // e.g., "?tab=profile"
   // console.log(location.hash);      // e.g., "#section"
-  // console.log(location.state);  
+  // console.log(location.state);
   const icons = [
     {
       icon: google,
@@ -62,12 +62,11 @@ const navigate = useNavigate()
 
     setIsLoading(true);
     setError("");
-
-    const success = await login(username, password);
-    if (success) {
+    const result = await login(username, password);
+    if (result.success) {
       navigate(location.state?.from || "/");
     } else {
-      setError("Invalid username or password");
+      setError(result.message || "Invalid username or password");
     }
     setIsLoading(false);
   };
@@ -78,7 +77,9 @@ const navigate = useNavigate()
           setIsOpen={setModalOpen}
           data={
             <div className="text-center">
-              <h2 className="text-2xl font-bold mb-2 text-green-600">Logged in</h2>
+              <h2 className="text-2xl font-bold mb-2 text-green-600">
+                Logged in
+              </h2>
               <p className="text-lg">You can close the page now.</p>
             </div>
           }
@@ -121,7 +122,7 @@ const navigate = useNavigate()
             <InputGroup className="flex gap-0.7 pl-2 bg-(--input-bg) border-input shadow-2xs">
               <InputGroupInput
                 className="pt-3 pb-3 text-foreground placeholder:text-muted-foreground"
-                placeholder="Username"
+                placeholder="Email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoFocus={false}

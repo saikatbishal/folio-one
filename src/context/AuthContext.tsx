@@ -1,10 +1,5 @@
 import { createContext, useState, useEffect, type ReactNode } from "react";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-  validateToken,
-  isTokenValid,
-} from "../lib/auth";
+import { generateAccessToken, validateToken, isTokenValid } from "../lib/auth";
 
 interface User {
   id: number;
@@ -17,7 +12,11 @@ interface AuthContextType {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
-  login: (username: string, password: string) => Promise<boolean>;
+  // login now returns an object with success and optional message
+  login: (
+    username: string,
+    password: string
+  ) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   refreshAccessToken: () => Promise<boolean>;
   isTokenExpired: () => boolean;
@@ -72,77 +71,73 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const login = async (
     username: string,
     password: string
-  ): Promise<boolean> => {
+  ): Promise<{ success: boolean; message?: string }> => {
     try {
-      // Fetch users from the dummy database
-      const response = await fetch("/db/users.json");
-      const data = await response.json();
+      // Call backend login endpoint
+      const resp = await fetch("http://localhost:3000/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        // include credentials so httpOnly cookie set by server is stored by the browser
+        credentials: "include",
+        body: JSON.stringify({ email: username, password }),
+      });
 
-      // Find user by username and password
-      const foundUser = data.users.find(
-        (u: {
-          username: string;
-          password: string;
-          id: number;
-          email: string;
-        }) => u.username === username && u.password === password
-      );
-
-      if (!foundUser) {
-        console.error("Invalid username or password");
-        return false;
+      if (!resp.ok) {
+        // Try to read server message
+        let msg = `Login failed: ${resp.status}`;
+        try {
+          const errData = await resp.json();
+          if (errData && errData.message) msg = errData.message;
+        } catch {
+          /* ignore json parse errors */
+        }
+        return { success: false, message: msg };
       }
 
-      // Generate tokens
-      const newAccessToken = generateAccessToken(
-        foundUser.id,
-        foundUser.username,
-        foundUser.email,
-        3600 // 1 hour
-      );
-      const newRefreshToken = generateRefreshToken(
-        foundUser.id,
-        foundUser.username,
-        foundUser.email,
-        604800 // 7 days
-      );
+      const data = await resp.json();
 
-      // Store tokens and user in both localStorage and sessionStorage
-      localStorage.setItem("accessToken", newAccessToken);
-      localStorage.setItem("refreshToken", newRefreshToken);
-      localStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: foundUser.id,
-          username: foundUser.username,
-          email: foundUser.email,
-        })
-      );
-      sessionStorage.setItem("accessToken", newAccessToken);
-      sessionStorage.setItem("refreshToken", newRefreshToken);
-      sessionStorage.setItem(
-        "user",
-        JSON.stringify({
-          id: foundUser.id,
-          username: foundUser.username,
-          email: foundUser.email,
-        })
-      );
+      // Backend sets an httpOnly cookie with the JWT and returns user info in the body.
+      // Accept response shapes like: { _id, username, usertype } or { user }
+      const returnedUser = data.user || data.profile || data || null;
+
+      if (!returnedUser || (!returnedUser._id && !returnedUser.id)) {
+        return { success: false, message: "Invalid server response" };
+      }
+
+      // Normalize user shape
+      const normalizedUser = {
+        id: returnedUser._id || returnedUser.id,
+        username:
+          returnedUser.username ||
+          returnedUser.name ||
+          returnedUser.email ||
+          String(returnedUser._id || returnedUser.id),
+        email: returnedUser.email || "",
+      };
+
+      // Store only the user on the client side; the auth token is stored as an httpOnly cookie by the server
+      localStorage.setItem("user", JSON.stringify(normalizedUser));
+      sessionStorage.setItem("user", JSON.stringify(normalizedUser));
+
+      // Clear any client-side tokens (not used with httpOnly cookie approach)
+      setAccessToken(null);
+      setRefreshToken(null);
 
       // Update state
-      setAccessToken(newAccessToken);
-      setRefreshToken(newRefreshToken);
-      setUser({
-        id: foundUser.id,
-        username: foundUser.username,
-        email: foundUser.email,
-      });
+      setUser(normalizedUser);
       setIsAuthenticated(true);
 
-      return true;
+      return { success: true };
     } catch (error) {
       console.error("Login error:", error);
-      return false;
+      const errObj = error as unknown as { message?: unknown };
+      const message =
+        errObj && typeof errObj.message === "string"
+          ? errObj.message
+          : String(error);
+      return { success: false, message };
     }
   };
 
