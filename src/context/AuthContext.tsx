@@ -73,8 +73,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     password: string
   ): Promise<{ success: boolean; message?: string }> => {
     try {
-      // Call backend login endpoint
-      const resp = await fetch("http://localhost:3000/api/auth/login", {
+      // Get API URL from environment variable (localhost in dev, production URL in prod)
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const resp = await fetch(`${apiUrl}/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
