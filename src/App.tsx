@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
+import { useUsers } from "./hooks/useUsers";
 import UserProfile from "./finta/UserProfile.tsx";
 import "./App.css";
-import {users} from '../public/db/users.json'
 import FintaHome from "./finta/FintaHome.tsx";
 import Founders from "./finta/Founders.tsx";
 import Guide from "./finta/Guide.tsx";
@@ -12,13 +12,26 @@ import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
 import { FintaLogo } from "../public/Icons.tsx";
 import ComingSoon from "./finta/ComingSoon.tsx";
+import { useMemo, useCallback } from "react";
+
 function App() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
-  // PrivateRoute component
-  const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-    return isAuthenticated ? <>{children}</> : <Login />;
-  };
+  const { findUserByUsername } = useUsers();
+
+  // Memoize user data lookup
+  const currentUserImage = useMemo(
+    () => findUserByUsername(user?.username)?.image,
+    [user?.username, findUserByUsername]
+  );
+
+  // PrivateRoute component - memoized to prevent recreation
+  const PrivateRoute = useCallback(
+    ({ children }: { children: React.ReactNode }) => {
+      return isAuthenticated ? <>{children}</> : <Login />;
+    },
+    [isAuthenticated]
+  );
   return (
     <motion.div
       initial={{
@@ -50,7 +63,7 @@ function App() {
                 name={user?.username}
                 username={user?.username}
                 email={user?.email}
-                image={users.find((u) => u.username === user?.username)?.image}
+                image={currentUserImage}
               />
             </PrivateRoute>
           }

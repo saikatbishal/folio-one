@@ -1,8 +1,9 @@
 import FintaButton from "./FintaButton";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Navbar from "./Navbar";
 import { useNavigate } from "react-router-dom";
 import uiheroimage from "../../public/herouiv1.png";
+import { useWindowSize } from "../hooks/useWindowSize";
 // import { Toggle } from "../components/ui/toggle";
 // import { DarkModeIcon, LightModeIcon } from "../../public/Icons";
 import { motion } from "framer-motion";
@@ -11,6 +12,8 @@ import { motion } from "framer-motion";
 const FintaHome = () => {
   const navigate = useNavigate();
   const [scrolled, setScrolled] = useState(false);
+  const { isMobile } = useWindowSize();
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 0);
@@ -20,53 +23,54 @@ const FintaHome = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // --- Animation Variants ---
+  // --- Animation Variants (memoized to prevent recreation) ---
 
-  const heroContainerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.3,
+  const heroContainerVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        transition: {
+          staggerChildren: 0.1,
+          delayChildren: 0.3,
+        },
       },
-    },
-  };
+    }),
+    []
+  );
 
-  const heroItemVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 12,
+  const heroItemVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          type: "spring" as const,
+          stiffness: 100,
+          damping: 12,
+        },
       },
-    },
-  };
+    }),
+    []
+  );
 
-  const navbarVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        type: "spring" as const,
-        stiffness: 100,
-        damping: 14,
-        duration: 0.5,
+  const navbarVariants = useMemo(
+    () => ({
+      hidden: { opacity: 0, y: -20 },
+      visible: {
+        opacity: 1,
+        y: 0,
+        transition: {
+          type: "spring" as const,
+          stiffness: 100,
+          damping: 14,
+          duration: 0.5,
+        },
       },
-    },
-  };
-
-  const [isMobile, setIsMobile] = useState<boolean>(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+    }),
+    []
+  );
   return (
     <div>
       {/* Navbar Section */}

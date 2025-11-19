@@ -1,16 +1,9 @@
-import { motion, useAnimationFrame } from "framer-motion";
-import { useRef } from "react";
+import { motion } from "framer-motion";
 
 const brands = ["Google", "Apple", "Microsoft", "Amazon", "Netflix", "Meta"];
 
 export default function AnimatedBrandScroll() {
-  const baseX = useRef(0);
-
-  useAnimationFrame(() => {
-    const speed = 0.05; // pixels per ms
-    baseX.current -= speed;
-  });
-
+  // Removed unnecessary useAnimationFrame and useRef for simpler, more efficient animation
   return (
     <div className="overflow-hidden whitespace-nowrap bg-gray-50 py-4">
       <motion.div
