@@ -1,37 +1,72 @@
 import Navbar from "./Navbar";
 import { motion, AnimatePresence } from "motion/react";
 import { IconArrowLeft, IconArrowRight, IconMapPin } from "@tabler/icons-react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { foundersData } from "../data/foundersData";
 import FintaModal from "./FintaModal";
+
+// Optimized text animation component to prevent re-splitting on every render
+const AnimatedText = ({ text, delay = 0.02 }: { text: string; delay?: number }) => {
+  const words = useMemo(() => text.split(" "), [text]);
+  
+  return (
+    <>
+      {words.map((word, index) => (
+        <motion.span
+          key={`${word}-${index}`}
+          initial={{
+            filter: "blur(10px)",
+            opacity: 0,
+            y: 5,
+          }}
+          animate={{
+            filter: "blur(0px)",
+            opacity: 1,
+            y: 0,
+          }}
+          transition={{
+            duration: 0.2,
+            ease: "easeInOut",
+            delay: delay * index,
+          }}
+          className="inline-block text-foreground"
+        >
+          {word}&nbsp;
+        </motion.span>
+      ))}
+    </>
+  );
+};
+
 const Founders = () => {
   // const { scrollYProgress } = useScroll();
   const [active, setActive] = useState(0);
   const [autoplay, setAutoplay] = useState<boolean>(false);
   const [showBio, setShowBio] = useState<boolean>(false);
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     setActive((prev) => (prev + 1) % foundersData.length);
-  };
+  }, []);
 
   useEffect(() => {
     if (!showBio) {
       setAutoplay(true);
     }
   }, [showBio]);
-  const handlePrev = () => {
-    setActive((prev) => (prev - 1 + foundersData.length) % foundersData.length);
-  };
 
-  const isActive = (index: number) => {
+  const handlePrev = useCallback(() => {
+    setActive((prev) => (prev - 1 + foundersData.length) % foundersData.length);
+  }, []);
+
+  const isActive = useCallback((index: number) => {
     return index === active;
-  };
+  }, [active]);
 
   useEffect(() => {
     if (autoplay) {
       const interval = setInterval(handleNext, 9000);
       return () => clearInterval(interval);
     }
-  }, [autoplay]);
+  }, [autoplay, handleNext]);
 
   const randomRotateY = () => {
     return Math.floor(Math.random() * 21) - 10;
@@ -124,29 +159,7 @@ const Founders = () => {
                 {foundersData[active].designation}
               </p>
               <motion.p className="mt-8 text-lg text-foreground">
-                {foundersData[active].bio.split(" ").map((word, index) => (
-                  <motion.span
-                    key={index}
-                    initial={{
-                      filter: "blur(10px)",
-                      opacity: 0,
-                      y: 5,
-                    }}
-                    animate={{
-                      filter: "blur(0px)",
-                      opacity: 1,
-                      y: 0,
-                    }}
-                    transition={{
-                      duration: 0.2,
-                      ease: "easeInOut",
-                      delay: 0.02 * index,
-                    }}
-                    className="inline-block text-foreground"
-                  >
-                    {word}&nbsp;
-                  </motion.span>
-                ))}
+                <AnimatedText text={foundersData[active].bio} />
               </motion.p>
             </motion.div>
             <div className="flex gap-4 pt-12 md:pt-0">
@@ -220,31 +233,10 @@ const Founders = () => {
                     </p>
                   </div>
                   <p className="text-md text-foreground">
-                    {foundersData[active].founderMessage
-                      .split(" ")
-                      .map((word, index) => {
-                        return (
-                          <motion.span
-                            key={word}
-                            className="inline-block mr-1"
-                            initial={{
-                              opacity: 0,
-                              y: 5,
-                            }}
-                            animate={{
-                              opacity: 1,
-                              y: 0,
-                            }}
-                            transition={{
-                              duration: 0.1,
-                              ease: "easeInOut",
-                              delay: 0.01 * index,
-                            }}
-                          >
-                            {word}&nbsp;
-                          </motion.span>
-                        );
-                      })}
+                    <AnimatedText 
+                      text={foundersData[active].founderMessage} 
+                      delay={0.01}
+                    />
                   </p>
                 </div>
               </motion.div>

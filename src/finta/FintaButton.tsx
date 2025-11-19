@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import React from "react";
+import React, { useMemo } from "react";
 
 type ButtonProps = {
   id?:number|string;
@@ -25,7 +25,9 @@ const FintaButton = ({
       onClick();
     } else return;
   };
-  const returnColorFromVariant = () => {
+
+  // Memoize style calculations to prevent recalculation on every render
+  const colorClass = useMemo(() => {
     switch (variant) {
       case "primary":
         return "bg-[#2679f3] text-white hover:bg-[#2262C7]";
@@ -40,14 +42,16 @@ const FintaButton = ({
       default:
         return "bg-[#2679f3] text-white hover:bg-[#2262C7]";
     }
-  };
-  const returnButtonSize = () => {
+  }, [variant]);
+
+  const sizeClass = useMemo(() => {
     if (size === "sm") return "py-0.5 px-1 text-[6px]";
     else if (size === "md") return "py-1.4 px-3 text-[8px]";
     else if (size === "lg") return "py-2 px-4 text-[10px]";
     else return "py-3 px-5 text-[12px]";
-  };
-  const returnButtonRounded = () => {
+  }, [size]);
+
+  const roundedClass = useMemo(() => {
     switch (rounded) {
       case "sm":
         return "rounded-sm";
@@ -62,15 +66,16 @@ const FintaButton = ({
       default:
         return "rounded-md";
     }
-  };
+  }, [rounded]);
+
   return (
     <motion.a
     animate={{ scale: 1 }}
     whileHover={{ scale: 1.05 }}
     whileTap={{ scale: 0.95 }}
-      className={` ${className} ${returnButtonSize()} 
-            ${returnButtonRounded()}
-            ${returnColorFromVariant()}
+      className={` ${className} ${sizeClass} 
+            ${roundedClass}
+            ${colorClass}
             py-2 px-6 text-xl flex cursor-pointer items-center justify-center text-center transition-colors duration-300 ease-in-out  border-neutral-300 inset-shadow-zinc-200"
  `}
       onClick={() => handleClick()}
@@ -80,4 +85,4 @@ const FintaButton = ({
   );
 };
 
-export default FintaButton;
+export default React.memo(FintaButton);

@@ -33,22 +33,31 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Sync auth state from storage
+  // Sync auth state from storage (optimized to reduce reads)
   const syncAuthState = () => {
-    const storedAccessToken =
-      localStorage.getItem("accessToken") ||
-      sessionStorage.getItem("accessToken");
-    const storedRefreshToken =
-      localStorage.getItem("refreshToken") ||
-      sessionStorage.getItem("refreshToken");
-    const storedUser =
-      localStorage.getItem("user") || sessionStorage.getItem("user");
-    if (storedAccessToken && isTokenValid(storedAccessToken) && storedUser) {
+    // Try localStorage first, then sessionStorage
+    const storedAccessToken = localStorage.getItem("accessToken") || sessionStorage.getItem("accessToken");
+    
+    if (!storedAccessToken || !isTokenValid(storedAccessToken)) {
+      // Token is invalid or missing - clear state
+      setAccessToken(null);
+      setRefreshToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      return;
+    }
+
+    // Token is valid - load remaining data
+    const storedRefreshToken = localStorage.getItem("refreshToken") || sessionStorage.getItem("refreshToken");
+    const storedUser = localStorage.getItem("user") || sessionStorage.getItem("user");
+    
+    if (storedUser) {
       setAccessToken(storedAccessToken);
       setRefreshToken(storedRefreshToken);
       setUser(JSON.parse(storedUser));
       setIsAuthenticated(true);
     } else {
+      // User data missing but token exists - clear everything
       setAccessToken(null);
       setRefreshToken(null);
       setUser(null);

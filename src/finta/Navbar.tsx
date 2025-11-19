@@ -1,21 +1,30 @@
-import { useEffect, useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import FintaButton from "./FintaButton";
 import FintaModal from "./FintaModal";
 import { motion } from "motion/react";
 import { useAuth } from "../hooks/useAuth";
-import {users} from '../../public/db/users.json'
+import { useUsers } from "../hooks/useUsers";
+import { useWindowSize } from "../hooks/useWindowSize";
+
 const Navbar = ({ className }: { className?: string }) => {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const { isMobile } = useWindowSize();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const { isAuthenticated, user, logout } = useAuth();
+  const { findUserByUsername } = useUsers();
 
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  // Memoize user image lookup
+  const userImage = useMemo(
+    () => findUserByUsername(user?.username)?.image,
+    [user?.username, findUserByUsername]
+  );
+
+  // Memoize logout handler
+  const handleLogout = useCallback(() => {
+    logout();
+    setIsOpen(false);
+    window.location.href = "/";
+  }, [logout]);
 
   const links = (
     <div className="flex flex-col items-center gap-4 p-8">
@@ -42,11 +51,7 @@ const Navbar = ({ className }: { className?: string }) => {
       </Link>
       {isAuthenticated ? (
         <button
-          onClick={() => {
-            logout();
-            setIsOpen(false);
-            window.location.href = "/";
-          }}
+          onClick={handleLogout}
           className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-lg"
         >
           Log Out ({user?.username})
@@ -93,21 +98,18 @@ const Navbar = ({ className }: { className?: string }) => {
               className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-sm"
             >
              
-              <img src={ users.find((u) => u.username === user?.username)?.image} style={{
+              <img src={userImage} style={{
                 borderRadius: "50%",
                 height:"24px",
                 width: "24px",
                 objectFit: "cover"
-              }}/>
+              }} alt="User avatar"/>
             </Link>
           )}
           <li>
             {isAuthenticated ? (
               <button
-                onClick={() => {
-                  logout();
-                  window.location.href = "/";
-                }}
+                onClick={handleLogout}
                 className="text-foreground hover:text-muted-foreground transition-colors duration-300 text-sm"
               >
                 Log Out
