@@ -1,5 +1,6 @@
 // import { useRef } from "react";
 // import { motion, useScroll, useTransform } from "motion/react";
+import React from "react";
 
 interface CardData {
   id: number;
@@ -8,7 +9,7 @@ interface CardData {
   content: string;
 }
 
-export const Card = ({ data }: { data: CardData }) => {
+export const Card = React.memo(({ data }: { data: CardData }) => {
   const { headline, description, content } = data;
   return (
     <>
@@ -21,7 +22,7 @@ export const Card = ({ data }: { data: CardData }) => {
       </div>
     </>
   );
-};
+});
 const CardParallax = () => {
   const data: CardData[] = [
     {
