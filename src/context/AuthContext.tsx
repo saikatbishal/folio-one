@@ -75,7 +75,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Get API URL from environment variable (localhost in dev, production URL in prod)
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
-      const resp = await fetch(`${apiUrl}/login`, {
+      const resp = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
