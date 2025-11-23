@@ -1,4 +1,6 @@
-const API_URL = import.meta.env.DEV
+const API_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : import.meta.env.DEV
   ? "http://localhost:3000/api"
   : "https://folio-one-backend-saikatbishals-projects.vercel.app/api";
 

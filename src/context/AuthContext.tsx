@@ -74,7 +74,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   ): Promise<{ success: boolean; message?: string }> => {
     try {
       // Get API URL from environment variable (localhost in dev, production URL in prod)
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+      const apiUrl =
+        import.meta.env.VITE_API_URL ||
+        (import.meta.env.DEV
+          ? "http://localhost:3000"
+          : "https://folio-one-backend-saikatbishals-projects.vercel.app");
       const resp = await fetch(`${apiUrl}/api/auth/login`, {
         method: "POST",
         headers: {
