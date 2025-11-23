@@ -68,22 +68,26 @@ npm run preview
 - Use the `cn()` utility function from `@/lib/utils` to merge Tailwind classes
 - Export both the component and its prop types
 
-Example pattern (using button as example):
+Example pattern (based on actual Button component):
 ```typescript
 import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center rounded-md",
+  "inline-flex items-center justify-center rounded-md font-medium",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
+        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        outline: "border bg-background hover:bg-accent",
         // other variants
       },
       size: {
         default: "h-9 px-4 py-2",
+        sm: "h-8 px-3",
+        lg: "h-10 px-6",
         // other sizes
       },
     },
@@ -94,27 +98,30 @@ const buttonVariants = cva(
   }
 )
 
-interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
-  asChild?: boolean
+function Button({
+  className,
+  variant,
+  size,
+  asChild = false,
+  ...props
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
+  const Comp = asChild ? Slot : "button"
+  
+  return (
+    <Comp
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
 }
-
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <button
-        ref={ref}
-        className={cn(buttonVariants({ variant, size }), className)}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = "Button"
 
 export { Button, buttonVariants }
 ```
+
+**Note**: The `asChild` prop allows the component to merge its props and classes with a child element using Radix UI's Slot component, enabling polymorphic behavior.
 
 #### Animation
 - Use Motion (Framer Motion) for animations
@@ -129,7 +136,8 @@ export { Button, buttonVariants }
 
 ### React Best Practices
 - Use functional components with hooks
-- Use `React.forwardRef` for components that need ref forwarding
+- Use `asChild` prop pattern with Radix UI's Slot for polymorphic components
+- Use `React.forwardRef` when components need ref forwarding (though not all components require it)
 - Set `displayName` for components created with `forwardRef`
 - Fast refresh requires files to only export components (use separate files for constants/utilities)
 
