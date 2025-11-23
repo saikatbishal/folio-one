@@ -1,7 +1,16 @@
 // import { useRef } from "react";
 // import { motion, useScroll, useTransform } from "motion/react";
-export const Card = ({data}:{data: any}) => {
-    const { headline, description, content } = data;
+import React from "react";
+
+interface CardData {
+  id: number;
+  headline: string;
+  description: string;
+  content: string;
+}
+
+export const Card = React.memo(({ data }: { data: CardData }) => {
+  const { headline, description, content } = data;
   return (
     <>
       <div className="flex flex-col gap-4 w-1/2 justify-center items-center mb-20">
@@ -13,9 +22,9 @@ export const Card = ({data}:{data: any}) => {
       </div>
     </>
   );
-};
+});
 const CardParallax = () => {
-  const data = [
+  const data: CardData[] = [
     {
       id: 1,
       headline: "Founder",

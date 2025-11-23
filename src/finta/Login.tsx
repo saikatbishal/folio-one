@@ -1,5 +1,5 @@
 import { motion } from "motion/react";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import FintaModal from "./FintaModal";
@@ -36,7 +36,9 @@ const Login = () => {
   // console.log(location.search);    // e.g., "?tab=profile"
   // console.log(location.hash);      // e.g., "#section"
   // console.log(location.state);
-  const icons = [
+
+  // Memoize social login icons array to prevent recreation
+  const icons = useMemo(() => [
     {
       icon: google,
       name: "Google",
@@ -52,7 +54,7 @@ const Login = () => {
       name: "Apple",
       url: "/auth/apple",
     },
-  ];
+  ], []);
 
   const handleLogin = async () => {
     if (!username || !password) {
