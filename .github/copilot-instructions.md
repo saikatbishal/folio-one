@@ -135,10 +135,14 @@ export { Component, componentVariants }
 
 ### ESLint Configuration
 - Follow the ESLint rules defined in `eslint.config.js`
-- Rules include:
-  - `@typescript-eslint/no-explicit-any` - avoid `any` type
-  - `react-refresh/only-export-components` - only export components from component files
-  - Standard React hooks rules
+- Configuration extends:
+  - `@eslint/js` recommended config
+  - `typescript-eslint` recommended config
+  - `eslint-plugin-react-hooks` recommended-latest config
+  - `eslint-plugin-react-refresh` vite config
+- Common issues to avoid:
+  - Avoid `any` type - specify explicit types
+  - Only export components from component files (for Fast Refresh compatibility)
 
 ### Styling
 - Use Tailwind CSS utility classes
@@ -189,7 +193,7 @@ Currently, the project does not have a test suite configured. When adding tests:
 - Test user interactions and accessibility
 
 ## Notes
-- The project is private and in early development (version 0.0.0)
+- This is a private package in early development (version 0.0.0)
 - Focus on maintaining consistency with existing code style
 - Prioritize component reusability and maintainability
 - Keep accessibility in mind when creating UI components
