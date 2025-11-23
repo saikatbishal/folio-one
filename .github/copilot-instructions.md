@@ -73,7 +73,7 @@ Example pattern (based on actual Button component):
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils" // relative import used in UI components
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md font-medium",
@@ -118,10 +118,13 @@ function Button({
   )
 }
 
-export { Button, buttonVariants }
+export { Button }
+// Note: You can also export buttonVariants if needed for reuse (like Badge component does)
 ```
 
-**Note**: The `asChild` prop allows the component to merge its props and classes with a child element using Radix UI's Slot component, enabling polymorphic behavior.
+**Notes**: 
+- The `asChild` prop allows the component to merge its props and classes with a child element using Radix UI's Slot component, enabling polymorphic behavior.
+- UI components in `src/components/ui/` use relative imports, while other parts of the codebase can use the `@/` path alias.
 
 #### Animation
 - Use Motion (Framer Motion) for animations
