@@ -68,22 +68,22 @@ npm run preview
 - Use the `cn()` utility function from `@/lib/utils` to merge Tailwind classes
 - Export both the component and its prop types
 
-Example pattern:
+Example pattern (using button as example):
 ```typescript
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-const componentVariants = cva(
-  "base-classes",
+const buttonVariants = cva(
+  "inline-flex items-center justify-center rounded-md",
   {
     variants: {
       variant: {
-        default: "default-variant-classes",
+        default: "bg-primary text-primary-foreground",
         // other variants
       },
       size: {
-        default: "default-size-classes",
+        default: "h-9 px-4 py-2",
         // other sizes
       },
     },
@@ -94,26 +94,26 @@ const componentVariants = cva(
   }
 )
 
-interface ComponentProps
-  extends React.HTMLAttributes<HTMLElement>,
-    VariantProps<typeof componentVariants> {
-  // additional props
+interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
 
-const Component = React.forwardRef<HTMLElement, ComponentProps>(
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, ...props }, ref) => {
     return (
-      <element
+      <button
         ref={ref}
-        className={cn(componentVariants({ variant, size }), className)}
+        className={cn(buttonVariants({ variant, size }), className)}
         {...props}
       />
     )
   }
 )
-Component.displayName = "Component"
+Button.displayName = "Button"
 
-export { Component, componentVariants }
+export { Button, buttonVariants }
 ```
 
 #### Animation
