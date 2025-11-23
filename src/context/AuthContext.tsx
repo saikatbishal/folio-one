@@ -103,9 +103,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const data = await resp.json();
 
-      // Backend sets an httpOnly cookie with the JWT and returns user info in the body.
-      // Accept response shapes like: { _id, username, usertype } or { user }
+      // Expect token in response body (JWT) and user info
+      const token = data.token as string | undefined;
       const returnedUser = data.user || data.profile || data || null;
+
+      if (!token) {
+        return { success: false, message: "No token returned from server" };
+      }
 
       if (!returnedUser || (!returnedUser._id && !returnedUser.id)) {
         return { success: false, message: "Invalid server response" };
@@ -122,13 +126,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         email: returnedUser.email || "",
       };
 
-      // Store only the user on the client side; the auth token is stored as an httpOnly cookie by the server
+      // Store user + token on the client side
       localStorage.setItem("user", JSON.stringify(normalizedUser));
       sessionStorage.setItem("user", JSON.stringify(normalizedUser));
+      localStorage.setItem("accessToken", token);
+      sessionStorage.setItem("accessToken", token);
 
-      // Clear any client-side tokens (not used with httpOnly cookie approach)
-      setAccessToken(null);
-      setRefreshToken(null);
+      setAccessToken(token);
 
       // Update state
       setUser(normalizedUser);

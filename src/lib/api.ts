@@ -5,11 +5,17 @@ const API_URL = import.meta.env.VITE_API_URL
   : "https://folio-one-backend-saikatbishals-projects.vercel.app/api";
 
 export const api = async (endpoint: string, options: RequestInit = {}) => {
+  const token =
+    localStorage.getItem("accessToken") ||
+    sessionStorage.getItem("accessToken");
+
   const res = await fetch(`${API_URL}${endpoint}`, {
     ...options,
-    credentials: "include", // Important for cookies
+    // cookies are no longer required for auth, but leaving include is harmless
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });
