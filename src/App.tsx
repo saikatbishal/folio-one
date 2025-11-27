@@ -1,17 +1,25 @@
+import { Suspense, lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useAuth } from "./hooks/useAuth";
-import UserProfile from "./finta/UserProfile.tsx";
+// import UserProfile from "./finta/UserProfile.tsx";
 import "./App.css";
-import {users} from '../public/db/users.json'
-import FintaHome from "./finta/FintaHome.tsx";
-import Founders from "./finta/Founders.tsx";
-import Guide from "./finta/Guide.tsx";
-import Pricing from "./finta/Pricing.tsx";
-import Login from "./finta/Login.tsx";
+import { users } from '../public/db/users.json'
+// import FintaHome from "./finta/FintaHome.tsx";
+// import Founders from "./finta/Founders.tsx";
+// import Guide from "./finta/Guide.tsx";
+// import Pricing from "./finta/Pricing.tsx";
+// import Login from "./finta/Login.tsx";
 import { motion } from "motion/react";
 import { useNavigate } from "react-router-dom";
-import { FintaLogo } from "../public/Icons.tsx";
 import ComingSoon from "./finta/ComingSoon.tsx";
+const FintaLogo = lazy(()=>import('../public/Icons.tsx').then(module => ({ default: module.FintaLogo })));
+const Founders = lazy(() => import('./finta/Founders.tsx'))
+const Guide = lazy(() => import('./finta/Guide.tsx'))
+const Pricing = lazy(() => import('./finta/Pricing.tsx'))
+const FintaHome = lazy(() => import('./finta/FintaHome.tsx'))
+const UserProfile = lazy(() => import('./finta/UserProfile.tsx'))
+const Login = lazy(() => import('./finta/Login.tsx'))
+
 function App() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useAuth();
@@ -35,12 +43,12 @@ function App() {
         <FintaLogo />
       </div>
       <Routes>
-        <Route path="/" element={<FintaHome />} />
-        <Route path="*" element={<ComingSoon />} />
-        <Route path="/founders" element={<Founders />} />
-        <Route path="/guide" element={<Guide />} />
-        <Route path="/pricing" element={<Pricing />} />
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Suspense><FintaHome /></Suspense>} />
+        <Route path="*" element={<Suspense><ComingSoon /></Suspense>} />
+        <Route path="/founders" element={<Suspense><Founders /></Suspense>} />
+        <Route path="/guide" element={<Suspense><Guide /></Suspense>} />
+        <Route path="/pricing" element={<Suspense><Pricing /></Suspense>} />
+        <Route path="/login" element={<Suspense><Login /></Suspense>} />
         <Route
           path="/userprofile"
           element={
